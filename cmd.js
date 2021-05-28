@@ -46,18 +46,14 @@ yargs.command({
             if(err) console.log(err);
             else {
                 // 1a. Je récupère le contenu en chaîne de caractère
-                console.log(data);
         
                 // 1b. Je transforme la string JSON en objet JS
                 const notes = JSON.parse(data);
                 console.log(notes);
-
-                
-                
                 //2. Exécuter les modifications en JS
-
                 // 2.a je vais récupérer le dernier élément du tableau
-                const lastNoteId = notes[notes.length-1].id
+                const lastNoteId = notes[notes.length-1].id;
+                console.log(lastNoteId);
                 const newNote = {
                     id: lastNoteId +1,
                     title: argv.title,
@@ -65,12 +61,9 @@ yargs.command({
                 }
                 notes.push(newNote)
                 console.log(notes)
-
-        
                 //2b. Transformer mes modifs obj JS en chaine JSON
                 const notesJSON = JSON.stringify(notes); 
                 console.log(notesJSON);
-        
                 //3. Envoyer les modifs de mon JSON en écrasant le fichier
                 fs.writeFile("note.json",notesJSON,(err) => {
                     if(err) console.log(chalk.inverse.red(err));
@@ -84,8 +77,40 @@ yargs.command({
 }).command({
     command: 'remove',
     describe: "Supprime une note",
-    handler: () => {
-        console.log("Chaud pour supprimer une note");
+    builder: {
+        id: {
+            describe: 'ID de la note à supprimer',
+            demandOption: true,
+            type: "number"
+        }
+    },
+    handler: (argv) => {
+
+        fs.readFile("note.json", "utf-8", (err,data) => {
+            if(err) console.log(err);
+            else {
+                // 1a. Je récupère le contenu en chaîne de caractère
+        
+                // 1b. Je transforme la string JSON en objet JS
+                const notes = JSON.parse(data);
+
+                const idNotes = {
+                    id: argv.id
+                }
+
+                const deletedNotes = notes.find(item => item.id === idNotes);
+                notes.splice(notes.indexOf(deletedNotes), 1);
+                const removeNotesJSON = JSON.stringify(notes); 
+
+                fs.writeFile("note.json",removeNotesJSON,(err) => {
+                    if(err) console.log(chalk.inverse.red(err));
+                else {
+                    console.log(chalk.inverse.green("La note a été supprimée"));
+                }
+            });
+            }
+        })
+        
     }
 }).command({
     command: 'read',
