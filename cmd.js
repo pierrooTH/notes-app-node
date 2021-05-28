@@ -81,7 +81,7 @@ yargs.command({
         id: {
             describe: 'ID de la note à supprimer',
             demandOption: true,
-            type: "number"
+            type: BigInt
         }
     },
     handler: (argv) => {
@@ -89,23 +89,13 @@ yargs.command({
         fs.readFile("note.json", "utf-8", (err,data) => {
             if(err) console.log(err);
             else {
-                // 1a. Je récupère le contenu en chaîne de caractère
-        
-                // 1b. Je transforme la string JSON en objet JS
                 const notes = JSON.parse(data);
-
-                const idNotes = {
-                    id: argv.id
-                }
-
-                const deletedNotes = notes.find(item => item.id === idNotes);
-                notes.splice(notes.indexOf(deletedNotes), 1);
-                const removeNotesJSON = JSON.stringify(notes); 
-
+                const removeNotes = notes.filter(note => note.id !== argv.id)
+                const removeNotesJSON = JSON.stringify(removeNotes); 
                 fs.writeFile("note.json",removeNotesJSON,(err) => {
                     if(err) console.log(chalk.inverse.red(err));
                 else {
-                    console.log(chalk.inverse.green("La note a été supprimée"));
+                    console.log(chalk.inverse.green(`La ${argv.id === 1 ? argv.id + "ère" : argv.id + "ème"} note a été supprimée`));
                 }
             });
             }
