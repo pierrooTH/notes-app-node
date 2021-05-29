@@ -105,8 +105,26 @@ yargs.command({
 }).command({
     command: 'read',
     describe: "Affiche le détail d'une note",
-    handler: () => {
-        console.log("Voici le détail d'une note");
+    builder: {
+        id: {
+            describe: 'ID de la note à supprimer',
+            demandOption: true,
+            type: BigInt
+        }
+    },
+    handler: (argv) => {
+        fs.readFile("note.json", "utf-8", (err,data) => {
+            if(err) console.log(err);
+            else {
+                const notes = JSON.parse(data);
+                let readNoteWithId = notes.filter(note => note.id === argv.id)
+                console.log(`\n Voici la note numéro ${argv.id}: \n`)
+                readNoteWithId.forEach(data => {
+                    console.log(chalk.underline.yellow(`title:`), `${data.title}`, chalk.yellow.underline(`\nmessage:`), `${data.message}`);
+                })
+            }
+        })
+        
     }
 }).argv;
 
