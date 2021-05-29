@@ -119,8 +119,8 @@ yargs.command({
                 const notes = JSON.parse(data);
                 let readNoteWithId = notes.filter(note => note.id === argv.id)
                 console.log(`\n Voici la note numéro ${argv.id}: \n`)
-                readNoteWithId.forEach(data => {
-                    console.log(chalk.underline.yellow(`title:`), `${data.title}`, chalk.yellow.underline(`\nmessage:`), `${data.message}`);
+                readNoteWithId.forEach(noteId => {
+                    console.log(chalk.underline.yellow(`title:`), `${noteId.title}`, chalk.yellow.underline(`\nmessage:`), `${noteId.message}`);
                 })
             }
         })
